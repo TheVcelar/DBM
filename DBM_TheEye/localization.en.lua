@@ -37,7 +37,7 @@ DBM_SOLARIAN_DEBUFF_WRATH				= "([^%s]+) (%w+) afflicted by Wrath of the Astroma
 DBM_SOLARIAN_CAST_SPLIT					= "High Astromancer Solarian casts Astromancer Split.";
 DBM_SOLARIAN_YELL_ENRAGE				= "Enough of this!%s*Now I call upon the fury of the cosmos itself."
 
-DBM_SOLARIAN_SPECWARN_WRATH				= "Wrath on you!";
+DBM_SOLARIAN_SPECWARN_WRATH				= "Wrath on you! -> FUCK OFF";
 DBM_SOLARIAN_ANNOUNCE_WRATH				= "*** Wrath on >%s< ***";
 DBM_SOLARIAN_ANNOUNCE_SPLIT				= "*** Adds incoming ***";
 DBM_SOLARIAN_ANNOUNCE_PRIESTS_SOON		= "*** Priests & Solarian in 5 sec ***";

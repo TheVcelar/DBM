@@ -58,7 +58,7 @@ local splitIds = {
 
 function Solarian:OnEvent(event, arg1)
 	if event == "SPELL_AURA_APPLIED" then
-		if arg1.spellId == 42783 then
+		if arg1.spellId == 33045 then	
 			self:SendSync("Wrath"..tostring(arg1.destName));
 		end
 	elseif event == "SPELL_CAST_START" then
