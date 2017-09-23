@@ -42,6 +42,8 @@ Vashj:AddBarOption("Static Charge: (.*)")
 Vashj:AddBarOption("Strider")
 Vashj:AddBarOption("Tainted Elemental")
 Vashj:AddBarOption("Naga")
+Vashj:AddBarOption("Entangle CD")
+Vashj:AddBarOption("Persuasion")
 
 
 function Vashj:OnCombatStart()
@@ -57,6 +59,7 @@ function Vashj:OnCombatStart()
 	};
 	shieldsDown = 0;
 	phase = 1;
+	self:StartStatusBarTimer(20, "Entangle CD", "Interface\\Icons\\Spell_Nature_Stranglevines");
 	if self.Options.RangeCheck then
 		DBM_Gui_DistanceFrame_Show();
 	end
@@ -78,6 +81,8 @@ function Vashj:OnCombatEnd()
 	if self.Options.RangeCheck then
 		DBM_Gui_DistanceFrame_Hide();
 	end
+	self:EndStatusBarTimer("Entangle CD");
+	self:EndStatusBarTimer("Persuasion CD");
 end
 
 function Vashj:OnEvent(event, arg1)
@@ -88,6 +93,10 @@ function Vashj:OnEvent(event, arg1)
 	elseif event == "SPELL_CAST_SUCCESS" then
 		if arg1.spellId == 38280 then
 			self:SendSync("Charge"..tostring(arg1.destName))
+		elseif arg1.spellId == 38316 then
+			self:StartStatusBarTimer(20, "Entangle CD", "Interface\\Icons\\Spell_Nature_Stranglevines");
+		elseif arg1.spellId == 38511 then
+			self:StartStatusBarTimer(50, "Persuasion CD", "Interface\\Icons\\Spell_Shadow_Charm");
 		end
 	elseif event == "ClearIcon" and arg1 then
 		usedIcons[arg1] = false;
@@ -96,17 +105,18 @@ function Vashj:OnEvent(event, arg1)
 		if string.find(arg1, DBM_VASHJ_YELL_PHASE2) then
 			phase = 2;
 			self:Announce(DBM_VASHJ_WARN_PHASE2, 1);
+			self:EndStatusBarTimer("Entangle CD");
 			
-			self:StartStatusBarTimer(62, "Strider", "Interface\\Icons\\INV_Misc_Fish_13");
+			self:StartStatusBarTimer(68, "Strider", "Interface\\Icons\\INV_Misc_Fish_13");
 			self:StartStatusBarTimer(53, "Tainted Elemental", "Interface\\Icons\\Spell_Nature_ElementalShields");
-			self:StartStatusBarTimer(47.5, "Naga", "Interface\\Icons\\INV_Misc_MonsterHead_02");
+			self:StartStatusBarTimer(49.5, "Naga", "Interface\\Icons\\INV_Misc_MonsterHead_02");
 			
-			self:ScheduleSelf(47.5, "Spawn", "Naga");
+			self:ScheduleSelf(49.5, "Spawn", "Naga");
 			self:ScheduleSelf(53, "Spawn", "Elemental");
-			self:ScheduleSelf(62, "Spawn", "Strider");
-			self:ScheduleSelf(42.5, "SpawnSoonWarn", "Naga");
+			self:ScheduleSelf(68, "Spawn", "Strider");
+			self:ScheduleSelf(44.5, "SpawnSoonWarn", "Naga");
 			self:ScheduleSelf(48, "SpawnSoonWarn", "Elemental");
-			self:ScheduleSelf(57, "SpawnSoonWarn", "Strider");
+			self:ScheduleSelf(63, "SpawnSoonWarn", "Strider");
 		elseif string.find(arg1, DBM_VASHJ_YELL_PHASE3) then
 			self:SendSync("Phase3");
 		end
@@ -143,16 +153,16 @@ function Vashj:OnEvent(event, arg1)
 			if self.Options.WarnSpawns then
 				self:Announce(DBM_VASHJ_WARN_STRIDER_NOW, 2);
 			end
-			self:ScheduleSelf(63, "Spawn", "Strider");
-			self:ScheduleSelf(57, "SpawnSoonWarn", "Strider");
-			self:StartStatusBarTimer(62, "Strider", "Interface\\Icons\\INV_Misc_Fish_13");
+			self:ScheduleSelf(68, "Spawn", "Strider");
+			self:ScheduleSelf(53, "SpawnSoonWarn", "Strider");
+			self:StartStatusBarTimer(68, "Strider", "Interface\\Icons\\INV_Misc_Fish_13");
 		elseif arg1 == "Naga" then
 			if self.Options.WarnSpawns then
 				self:Announce(DBM_VASHJ_WARN_NAGA_NOW, 2);
 			end
-			self:ScheduleSelf(47.5, "Spawn", "Naga");
-			self:ScheduleSelf(42.5, "SpawnSoonWarn", "Naga");
-			self:StartStatusBarTimer(47.5, "Naga", "Interface\\Icons\\INV_Misc_MonsterHead_02");
+			self:ScheduleSelf(49.5, "Spawn", "Naga");
+			self:ScheduleSelf(44.5, "SpawnSoonWarn", "Naga");
+			self:StartStatusBarTimer(49.5, "Naga", "Interface\\Icons\\INV_Misc_MonsterHead_02");
 		end
 	
 	elseif event == "UNIT_DIED" then
@@ -225,7 +235,9 @@ function Vashj:OnSync(msg)
 		self:EndStatusBarTimer("Elemental");
 		self:EndStatusBarTimer("Strider");
 		self:EndStatusBarTimer("Naga");
-		self:Announce(DBM_VASHJ_WARN_PHASE3, 3);		
+		self:Announce(DBM_VASHJ_WARN_PHASE3, 3);
+		self:StartStatusBarTimer(20, "Entangle CD", "Interface\\Icons\\Spell_Nature_Stranglevines");
+		self:StartStatusBarTimer(10, "Persuasion CD", "Interface\\Icons\\Spell_Shadow_Charm");
 
 	elseif string.sub(msg, 0, 4) == "Loot" then
 		local target = string.sub(msg, 5);
